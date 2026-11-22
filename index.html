@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.S Technician - Direct Google Review Hub</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f8f9fa; color: #333; padding: 20px 15px; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
+        h2 { color: #0056b3; font-size: 22px; margin-bottom: 5px; }
+        p.subtitle { color: #666; font-size: 14px; margin-bottom: 15px; }
+        .star-rating { font-size: 32px; color: #ffc107; margin-bottom: 15px; }
+        .instruction { background: #eef6ff; color: #0056b3; padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 15px; line-height: 1.5; text-align: left; }
+        .instruction span { color: #d9534f; display: block; margin-top: 4px; font-size: 12px; }
+        .review-list { display: flex; flex-direction: column; gap: 12px; max-height: 380px; overflow-y: auto; text-align: left; padding-right: 5px; }
+        .review-card { border: 2px solid #e0e0e0; border-radius: 10px; padding: 14px 15px; cursor: pointer; transition: all 0.2s ease; background: #fafafa; }
+        .review-card:hover { border-color: #0056b3; background: #f0f7ff; transform: translateY(-2px); }
+        .review-card p { font-size: 14px; color: #444; line-height: 1.4; }
+        .badge { display: inline-block; background: #28a745; color: white; font-size: 11px; padding: 2px 8px; border-radius: 12px; margin-top: 6px; }
+        .refresh-btn { width: 100%; background: #6c757d; color: white; border: none; padding: 12px; font-size: 15px; font-weight: 600; border-radius: 10px; margin-top: 15px; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 8px rgba(108,117,125,0.3); }
+        .refresh-btn:hover { background: #5a6268; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>S.S Technician</h2>
+    <p class="subtitle">Electrician & Plumbing Home Services | Narela, Delhi</p>
+
+    <div class="star-rating">⭐⭐⭐⭐⭐</div>
+
+    <div class="instruction">
+        👉 <strong>Bas kisi ek review par click karein!</strong><br>
+        <span>Text copy ho jayega aur seedha Google Review page open ho jayega.</span>
+    </div>
+
+    <div class="review-list" id="reviewContainer">
+        <!-- Dynamic Unique Reviews will load here -->
+    </div>
+
+    <button class="refresh-btn" onclick="loadReviews()">🔄 Yeh pasand nahi aaye? Dusre reviews dikhao</button>
+</div>
+
+<script>
+    // Aapka Naya Direct Google Review Link
+    const GOOGLE_REVIEW_LINK = "https://g.page/r/CTLIE7iQ3XO4EAE/review";
+
+    const masterReviews = [
+        "Best electrician in Narela! S.S Technician fixed our complete house wiring and switchboard issues very quickly. Top-notch service near Sector A1.",
+        "Aapki plumbing service kamaal ki hai! Pipe leakage repair aur water motor fitting ke liye Narela mein S.S Technician se behtar koi nahi.",
+        "Very professional home maintenance service near Satyavadi Raja Harishchandra Hospital. MCB trip problem ko turant theek kiya.",
+        "Excellent plumbing and electrical maintenance work done at home. Very polite behavior and affordable rates in Delhi Narela.",
+        "Emergency short-circuit problem thi, S.S Technician ne turant akar fix kar diya. Highly skilled electrician in Narela area.",
+        "Best plumber for drainage pipeline overhaul and bathroom fittings. Clean work and very reliable technician.",
+        "Geyser installation aur wiring ka kaam karwaya tha. Quality work aur time ke pakke hain S.S Technician.",
+        "Narela sector A1 mein sabse trusted electrical aur plumbing repair service provider. 5 star rating deserved!",
+        "Quick response, honest pricing, and expert troubleshooting for all household electrical issues. Highly recommended!",
+        "Water tank leakage aur valve fitting ki problem thi, ek hi visit mein solve ho gayi. Best plumbing services in Narela.",
+        "Wiring, fan installation, and light fitting ka kaam bahut neat tarike se kiya. Great job by S.S Technician!",
+        "Agar Narela mein koi accha plumber ya electrician chahiye toh S.S Technician best option hai. Bahut badiya service!",
+        "Very reliable electrician and plumber in Narela 110040. Excellent service quality and very humble technician.",
+        "Home wiring upgrade aur pipe fitting ka kaam karwaya. Bohot hi saf suthra aur professional kaam karte hain S.S Technician."
+    ];
+
+    const container = document.getElementById('reviewContainer');
+
+    function getShuffledReviews() {
+        let shuffled = [...masterReviews].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 5);
+    }
+
+    function loadReviews() {
+        container.innerHTML = "";
+        const activeReviews = getShuffledReviews();
+
+        activeReviews.forEach((rev) => {
+            const card = document.createElement('div');
+            card.className = 'review-card';
+            card.onclick = () => selectAndRedirect(rev);
+            card.innerHTML = `<p>"${rev}"</p><span class="badge">⭐ Click to Copy & Open Google</span>`;
+            container.appendChild(card);
+        });
+    }
+
+    function selectAndRedirect(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                window.location.href = GOOGLE_REVIEW_LINK;
+            }).catch(e => {
+                window.location.href = GOOGLE_REVIEW_LINK;
+            });
+        } else {
+            window.location.href = GOOGLE_REVIEW_LINK;
+        }
+    }
+
+    window.onload = loadReviews;
+</script>
+
+</body>
+</html>
