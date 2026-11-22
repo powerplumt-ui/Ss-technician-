@@ -1,0 +1,399 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Power Plum Admin Hub v4</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #4f46e5;
+      --purple: #7c3aed;
+      --teal: #0d9488;
+      --rose: #e11d48;
+      --amber: #d97706;
+      --emerald: #059669;
+      --blue: #2563eb;
+      --radius: 18px;
+      --shadow: 0 10px 28px rgba(15, 23, 42, 0.07);
+    }
+    * { box-sizing: border-box; font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 18px;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .brand-group { display: flex; align-items: center; gap: 12px; }
+    .brand-logo {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff; font-weight: 900; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .brand-title { margin: 0; font-size: 16px; font-weight: 800; }
+    .brand-sub { margin: 2px 0 0; font-size: 11px; color: var(--emerald); font-weight: 700; }
+
+    .nav-pills { display: none; flex-wrap: wrap; gap: 6px; background: var(--surface-soft); padding: 4px; border-radius: 14px; border: 1px solid var(--border); }
+    .nav-btn {
+      border: none; background: transparent; color: var(--muted);
+      padding: 8px 13px; border-radius: 11px; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .nav-btn.active { background: var(--primary); color: #fff; }
+
+    .actions-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .btn {
+      border: none; border-radius: 12px; padding: 9px 14px;
+      font-size: 12px; font-weight: 700; cursor: pointer; color: #fff; background: var(--primary);
+    }
+    .btn:hover { filter: brightness(1.06); }
+    .btn-sm { padding: 6px 11px; font-size: 11px; border-radius: 9px; }
+    .btn-full { width: 100%; }
+    .btn-green { background: var(--emerald); }
+    .btn-red { background: var(--rose); }
+    .btn-amber { background: var(--amber); }
+    .btn-blue { background: var(--blue); }
+    .btn-slate { background: #334155; }
+    .btn-teal { background: var(--teal); }
+    .btn-violet { background: var(--purple); }
+    .btn-outline { background: #fff; color: var(--ink); border: 1px solid var(--border); }
+
+    .auth-wrap { min-height: calc(100vh - 70px); display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .auth-card {
+      width: 100%; max-width: 420px; background: var(--surface);
+      border-radius: 22px; padding: 26px; border: 1px solid var(--border); box-shadow: var(--shadow);
+    }
+    .auth-badge {
+      display: inline-block; background: #eef2ff; color: var(--primary);
+      font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 999px; margin-bottom: 10px;
+    }
+    .auth-title { margin: 0 0 6px; font-size: 20px; font-weight: 800; }
+    .auth-desc { margin: 0 0 16px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    input, select {
+      width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1;
+      border-radius: 12px; font-size: 13px; background: #fff; color: var(--ink);
+    }
+    input:focus, select:focus { outline: 2px solid var(--primary); border-color: var(--primary); }
+
+    .feedback { margin-top: 10px; font-size: 12px; font-weight: 700; min-height: 18px; }
+    .err { color: var(--rose); }
+    .ok { color: var(--emerald); }
+
+    .page-wrap { display: none; max-width: 1120px; margin: 0 auto; padding: 18px 16px 72px; }
+    .admin-tab { display: none; }
+    .admin-tab.active-tab { display: block; }
+
+    .section-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .section-title { margin: 0; font-size: 18px; font-weight: 800; }
+    .section-sub { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 16px; }
+    .kpi-card { border-radius: 18px; padding: 18px; color: #fff; box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12); }
+    .kpi-teal { background: linear-gradient(135deg, #06b6d4, #2563eb); }
+    .kpi-purple { background: linear-gradient(135deg, #a855f7, #4f46e5); }
+    .kpi-rose { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+    .kpi-amber { background: linear-gradient(135deg, #f59e0b, #ea580c); }
+    .kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; opacity: 0.92; }
+    .kpi-value { font-size: 28px; font-weight: 900; margin: 6px 0 4px; }
+    .kpi-meta { font-size: 11px; opacity: 0.92; font-weight: 600; }
+
+    .card {
+      background: var(--surface); border-radius: var(--radius); padding: 18px;
+      border: 1px solid var(--border); box-shadow: var(--shadow); margin-bottom: 16px;
+    }
+    .card-title { margin: 0 0 6px; font-size: 14px; font-weight: 800; }
+    .card-desc { margin: 0 0 12px; font-size: 12px; color: var(--muted); line-height: 1.45; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+    .mt-2 { margin-top: 8px; }
+    .mt-3 { margin-top: 12px; }
+    .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+    .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin-bottom: 16px; }
+    .chart-box { width: 100%; overflow-x: auto; }
+    .legend-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; font-size: 11px; font-weight: 700; color: var(--muted); }
+    .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+
+    .perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; margin-bottom: 16px; }
+    .tech-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 15px; box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+      display: flex; flex-direction: column; justify-content: space-between; gap: 10px;
+    }
+    .tech-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .tech-name { margin: 0; font-size: 15px; font-weight: 800; }
+    .tech-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .pill-score { background: #eef2ff; color: var(--primary); font-size: 11px; font-weight: 800; padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
+    .metrics-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+    .metric-box { background: var(--surface-soft); border: 1px solid var(--border); border-radius: 12px; padding: 8px 6px; }
+    .metric-num { font-size: 16px; font-weight: 900; }
+    .metric-lbl { font-size: 10px; color: var(--muted); font-weight: 700; margin-top: 2px; }
+    .prog-wrap { height: 7px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+    .prog-bar { height: 100%; background: linear-gradient(90deg, #4f46e5, #06b6d4); border-radius: 999px; }
+
+    .table-wrap { overflow-x: auto; max-height: 290px; border: 1px solid var(--border); border-radius: 14px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+    th { background: #0f172a; color: #fff; padding: 10px; position: sticky; top: 0; font-size: 11px; }
+    td { padding: 9px 10px; border-bottom: 1px solid #f1f5f9; }
+
+    .list-box {
+      border: 1px solid var(--border); border-radius: 12px; padding: 8px;
+      max-height: 140px; overflow-y: auto; background: var(--surface-soft);
+      margin-top: 8px; font-size: 11px;
+    }
+    .list-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 4px; border-bottom: 1px solid #e2e8f0; }
+    .list-item:last-child { border-bottom: none; }
+    .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .toggle-label { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .toggle-label input { width: auto; cursor: pointer; }
+
+    .modal-bg {
+      display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.78);
+      align-items: center; justify-content: center; padding: 16px; z-index: 100;
+    }
+    .modal-bg.open { display: flex; }
+    .modal-card { background: #fff; width: 100%; max-width: 460px; border-radius: 18px; overflow: hidden; }
+    .modal-head { background: #0f172a; color: #fff; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; }
+    .modal-img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #0f172a; display: block; }
+    .modal-foot { background: #0f172a; color: #fff; padding: 12px 14px; font-size: 12px; }
+
+    .link-status-banner {
+      background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a;
+      border-radius: 14px; padding: 12px 14px; font-size: 12px; line-height: 1.5; margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="previewPopupModal" class="modal-bg">
+    <div class="modal-card">
+      <div class="modal-head">
+        <span>Popup Ad Preview</span>
+        <button id="closePreviewPopupBtn" type="button" class="btn btn-red btn-sm">Close</button>
+      </div>
+      <img id="previewPopupImg" src="" alt="Preview" class="modal-img" />
+      <div class="modal-foot">
+        <div id="previewPopupCaption" style="font-weight:700;"></div>
+        <div id="previewPopupLink" class="truncate" style="color:#fbbf24;font-size:11px;margin-top:4px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="techDetailModal" class="modal-bg">
+    <div class="modal-card">
+      <div class="modal-head">
+        <span id="techModalTitle">Technician Performance Detail</span>
+        <button id="closeTechModalBtn" type="button" class="btn btn-red btn-sm">Close</button>
+      </div>
+      <div id="techModalBody" style="padding:16px;font-size:12px;line-height:1.6;max-height:70vh;overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand-group">
+      <div class="brand-logo">PP</div>
+      <div>
+        <h1 class="brand-title">Power Plum Admin Hub</h1>
+        <p id="liveBridgeStatus" class="brand-sub">● App Link Ready (LocalStorage + BroadcastChannel + Cloud API)</p>
+      </div>
+    </div>
+
+    <nav id="adminNav" class="nav-pills">
+      <button type="button" class="nav-btn active" data-tab="tab-home">🏠 Home</button>
+      <button type="button" class="nav-btn" data-tab="tab-techs">👷 Technicians</button>
+      <button type="button" class="nav-btn" data-tab="tab-ads">📢 Ads & Media</button>
+      <button type="button" class="nav-btn" data-tab="tab-sync">⚙️ Sync & DB</button>
+    </nav>
+
+    <div class="actions-row">
+      <button id="refreshAdminDataBtn" type="button" class="btn btn-blue btn-sm">↻ Refresh</button>
+      <button id="lockAdminBtn" type="button" class="btn btn-red btn-sm" style="display:none;">🔒 Lock</button>
+    </div>
+  </header>
+
+  <section id="adminAuthCard" class="auth-wrap">
+    <div class="auth-card">
+      <span class="auth-badge">POWER PLUM ADMIN LOGIN</span>
+      <h2 class="auth-title">Admin Panel Login</h2>
+      <p class="auth-desc">
+        PIN (<strong>8659</strong>) daal kar login karein. Login ke baad sabse pehle <strong>Home Screen</strong> khulegi jisme live data, graphs, aur technician performance dikhegi.
+      </p>
+      <form id="adminPinForm" onsubmit="return false;">
+        <input type="password" id="adminPinInput" autocomplete="off" placeholder="Enter PIN (8659)" />
+        <button id="adminUnlockBtn" type="submit" class="btn btn-full mt-3">Login to Home ➔</button>
+      </form>
+      <div id="adminPinFeedback" class="feedback"></div>
+    </div>
+  </section>
+
+  <main id="adminDashboard" class="page-wrap">
+
+    <div id="tab-home" class="admin-tab active-tab">
+      <div id="appLinkSummaryBox" class="link-status-banner"></div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Home Overview & Live Performance</h2>
+          <p class="section-sub">Sabse pehle home summary, visual graphics, aur har technician ka kaam.</p>
+        </div>
+        <div class="row">
+          <button id="loadSampleTechDataBtn" type="button" class="btn btn-outline btn-sm">+ Demo Tech Stats</button>
+          <button id="goTechsTabBtn" type="button" class="btn btn-blue btn-sm">All Technicians ➔</button>
+          <button id="goAdsTabBtn" type="button" class="btn btn-violet btn-sm">Manage Ads</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-teal">
+          <div class="kpi-label">Registered Technicians</div>
+          <div id="kpiTechCount" class="kpi-value">0</div>
+          <div class="kpi-meta">Active field & shop profiles</div>
+        </div>
+        <div class="kpi-card kpi-purple">
+          <div class="kpi-label">Total App Opens</div>
+          <div id="kpiOpenCount" class="kpi-value">0</div>
+          <div class="kpi-meta">Across all technician sessions</div>
+        </div>
+        <div class="kpi-card kpi-rose">
+          <div class="kpi-label">Total PDFs Generated</div>
+          <div id="kpiPdfCount" class="kpi-value">0</div>
+          <div class="kpi-meta">Estimates, BOMs & challans</div>
+        </div>
+        <div class="kpi-card kpi-amber">
+          <div class="kpi-label">Total Ad Clicks</div>
+          <div id="kpiAdClickCount" class="kpi-value">0</div>
+          <div id="kpiAdBreakdown" class="kpi-meta">Square, Popup & 16:9 Banners</div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <section class="card">
+          <h3 class="card-title">Technician Work Comparison (Bar Graph)</h3>
+          <p class="card-desc">Har technician ke App Opens, PDFs aur Ad Clicks ka comparison.</p>
+          <div id="techBarChartContainer" class="chart-box"></div>
+          <div class="legend-list">
+            <span><i class="dot" style="background:#4f46e5;"></i>App Opens</span>
+            <span><i class="dot" style="background:#059669;"></i>PDFs</span>
+            <span><i class="dot" style="background:#ea580c;"></i>Ad Clicks</span>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3 class="card-title">Engagement & Ad Distribution (Donut Graph)</h3>
+          <p class="card-desc">Total app opens, generated PDFs, aur ad clicks ka ratio.</p>
+          <div id="engagementDonutContainer" class="chart-box"></div>
+        </section>
+      </div>
+
+      <section class="card">
+        <div class="toggle-row">
+          <div>
+            <h3 class="card-title" style="margin:0;">Technician Performance Cards</h3>
+            <p class="card-desc" style="margin:2px 0 0;">Har technician ne kitni baar app khola, kitne PDF banaye, aur kitne ads click kiye.</p>
+          </div>
+          <input type="text" id="homeTechFilterInput" placeholder="Filter by name, mobile, area..." style="max-width:240px;" />
+        </div>
+        <div id="homeTechPerfCards" class="perf-grid mt-2"></div>
+      </section>
+    </div>
+
+    <div id="tab-techs" class="admin-tab">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Technicians Directory & Detailed Performance</h2>
+          <p class="section-sub">Har technician ki chhoti-se-chhoti detail, activity log, aur CSV export.</p>
+        </div>
+        <button id="exportExcelCsvBtn" type="button" class="btn btn-green btn-sm">⬇ Download CSV</button>
+      </div>
+
+      <div class="grid-2">
+        <section class="card">
+          <h3 class="card-title">Search Technician Activity & Stats</h3>
+          <div class="row">
+            <input type="text" id="adminSearchMobile" placeholder="Enter Mobile No or Name..." />
+            <button id="searchTechBtn" type="button" class="btn btn-blue" style="width:auto;">Search</button>
+          </div>
+          <div id="adminSearchResult" class="list-box" style="display:none;"></div>
+        </section>
+
+        <section class="card">
+          <div class="toggle-row">
+            <h3 class="card-title" style="margin:0;">Ad-Wise Click Counter</h3>
+            <button id="resetAdClicksBtn" type="button" class="btn btn-red btn-sm">Reset Clicks</button>
+          </div>
+          <div id="allAdsClickStatsContainer" class="list-box"></div>
+        </section>
+      </div>
+
+      <section class="card">
+        <h3 class="card-title">Complete Technician Performance Table (<span id="totalTechCount">0</span>)</h3>
+        <div class="table-wrap mt-2">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Technician</th>
+                <th>Mobile</th>
+                <th>Trade & Shop</th>
+                <th>Area</th>
+                <th>App Opens</th>
+                <th>PDFs</th>
+                <th>Ad Clicks</th>
+                <th>Last Active</th>
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody id="techRegistryTableBody"></tbody>
+          </table>
+        </div>
+        <p id="emptyTechRegistryMsg" class="card-desc mt-2" style="text-align:center;">Abhi koi technician registered nahi hai.</p>
+      </section>
+    </div>
+
+    <div id="tab-ads" class="admin-tab">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Ads, Banners, YouTube & Notifications</h2>
+          <p class="section-sub">Main app ke ads, banners, channel link, aur notification bell control karein.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <section class="card">
+          <div class="toggle-row">
+            <h3 class="card-title" style="margin:0;">Right-Side 1:1 Square Ad</h3>
+            <label class="toggle-label"><input type="checkbox" id="adminSquareAdToggle" /><span>Show</span></label>
+          </div>
+          <div class="grid-2">
+            <input type="text" id="adminSquareAdTag" placeholder="Badge Tag (e.g. DEAL)" />
+            <input type="text" id="adminSquareAdTitle" placeholder="Short Caption" />
+          </div>
+          <input type="text" id="adminSquareAdImgUrl" class="mt-2" placeholder="1:1 Square Image URL (https://...)" />
+          <input type="text" id="adminSquareAdTargetUrl" class="mt-2" placeholder="Target Link (https://...)" />
+          <button id="addSquareAdBtn" type="button" class="btn btn-teal btn-full mt-2">+ Add 1:1 Square Ad</button>
+          <div id="squareAdListContainer" class="list-box"></div>
+        </section>
+
+        <section class="card">
+          <div class="toggle-row">
+            <h3 class="card-title" style="margin:0;">Full-Screen Popup Ads</h3>
+            <label class="toggle-label"><input type="checkbox" id="adminPopupAdToggle" /><span>Enable Popup</span></label>
+          </div>
+          <input type="text" id="adminPopupAdImgUrl" placeholder="Popup Image URL (https://...)" />
+          <input type="text" id="adminPopupAdCaption" class="mt-2" placeholder="Popup Offer Caption" />
+          <input type="text" id="adminPopupAdTargetUrl" class="mt-2" placeholder="Target Link (https://...)" />
+          <div class="grid-3 mt-2">
+            <button id="addPopupAdItemBtn" type="button" class=
